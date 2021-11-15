@@ -31,6 +31,7 @@
     <button id="bluetoothButton">Bluetooth</button>
     <p>Log</p>
     <div id="logs"></div>
+    <button id="buttonA">A</button>
 </body>
 <script src="./webBluetooth.js"></script>
 <script type="text/javascript">
@@ -45,7 +46,14 @@
     bludetoothButton.addEventListener("click", ()=>{
         console.log("click");
         bluetooth.connect();
+    })
+    const buttonA = document.getElementById('buttonA');
+    buttonA.addEventListener("mousedown", () => {
+        bluetooth.send(bluetooth.getChar, 'A',-100)
+    })
+    buttonA.addEventListener("mouseup", () => {
         
+        bluetooth.send(bluetooth.getChar, 'A',0)
     })
     //lego boost uuid
  

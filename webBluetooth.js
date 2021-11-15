@@ -42,9 +42,10 @@ class WebBlueTooth {
         try{
             this.setLog('Requesting any Bluetooth Device...');
             this.bluetoothDevice = await navigator.bluetooth.requestDevice(options);
+            this.setLog(this.bluetoothDevice.name)
             //블루투스 디바이스 찾기
             this.bluetoothDevice.addEventListener('gattserverdisconnected', this.onDisconnected);
-            this.getCharacteristic(this.bluetoothDevice)
+            return this.getCharacteristic(this.bluetoothDevice)
         } catch(err){
             console.log(err)
         }
@@ -61,6 +62,7 @@ class WebBlueTooth {
         // Characteristic을 제공.
 
         this.addListeners()
+        return this.getChar
     }
     addListeners() {
         this.getChar.addEventListener('characteristicvaluechanged', event => {
@@ -99,20 +101,20 @@ class WebBlueTooth {
             //   }
             }, 1000);
             if (typeof(data[5]) === undefined) data[5] = 0;
-            if (this.num2type[data[5]]) {
+            console.log(data[5])
+            // if (this.num2type[data[5]]) { // data[5] 달려있는 포트의 넘버
                 this.setLog('Found: ' + this.num2type[data[5]]);
-            }
+            // }
               if (data[4] === 0x01) {
                 //어떤 포트가 달려있는지. 확인. 모터를 인식못함.
-                this.ports.push({
-                  data : data[3],
+                this.ports[data[3]] = {
                   type: 'port',
                   deviceType: this.num2type[data[5]],
                   deviceTypeNum: data[5],
-                });
+                };
+                console.log(this.ports)
               } else if (data[4] === 0x02) {
-                this.ports.push = {
-                  data: data[3],
+                this.ports[data[3]] = {
                   type: 'group',
                   deviceType: this.num2type[data[5]],
                   deviceTypeNum: data[5],
@@ -125,8 +127,7 @@ class WebBlueTooth {
             console.log('Malformed message');
             console.log('<', data);
           }
-          case 0x45: {
-              this.setLog("parseSensor")
+          case 0x45: {//값을 받을 떄.
               this.parseSensor(data)
           }
           case 0x47: {
@@ -154,7 +155,6 @@ class WebBlueTooth {
     }
 
     subscribeAll() {
-    console.log(this.ports)
     Object.entries(this.ports).forEach(([port, data]) => {
     console.log("subscribe : ",port, data)
 
@@ -173,7 +173,7 @@ class WebBlueTooth {
     }
     parseSensor(data) {
         if (!this.ports[data[3]]) {
-          this.log('parseSensor unknown port 0x' + data[3].toString(16));
+          this.setLog('parseSensor unknown port 0x' + data[3].toString(16));
           return;
         }
         switch (this.ports[data[3]].deviceType) {
@@ -298,10 +298,12 @@ class WebBlueTooth {
         });
     }
     buf(buf) {
-        const data = new Uint8Array(buf);
-        let message = new Uint8Array([Buffer.alloc(2), data]); 
-        message[0] = message.length;
-        return message
+        var ab = new ArrayBuffer(buf.length);
+        var view = new Uint8Array(ab);
+        for (var i = 0; i < buf.length; ++i) {
+            view[i] = buf[i];
+        }
+        return ab;
     }
 
       setLog(text) {
@@ -315,10 +317,23 @@ class WebBlueTooth {
       async onDisconnected () {
         this.setLog('> Bluetooth Device disconnected');
         try {
-          await getCharacteristic()
+          await this.getCharacteristic()
         } catch(error) {
             setLog('Argh! ' + error);
         }
       }
+    //   async reconnect() {
+    //     if (this.bluetoothDevice) {
+    //       const bluetooth = await this.getCharacteristic(this.bluetoothDevice);
+    //       return [true, bluetooth];
+    //     }
+    //     }
+    //     disconnect() {
+    //         if (this.bluetoothDevice) {
+    //         this.bluetoothDevice.gatt.disconnect();
+    //         return true;
+    //         }
+    //         return false;
+    //     }
 }
 
