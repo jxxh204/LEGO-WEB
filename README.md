@@ -9,3 +9,5 @@ LEGO BOOST WEB CONTROL
  - 11/15
     - getCharacteristic
  - v0.0.2
+    - 포트뽑아옴.
+ - v0.0.3

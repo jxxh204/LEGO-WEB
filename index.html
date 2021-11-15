@@ -6,8 +6,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>lego connect</title>
 </head>
+<style>
+    body {
+        position: absolute;
+        left: 50%;
+        top:50%;
+        transform: translate(-50%,-50%);
+        text-align: center;
+        font-size: 2vw;
+    }
+    button {
+        width: 20vw;
+        font-size: 2vw;
+        height: 5vw;
+        background: black;
+        color:white
+    }
+    div {
+        border: solid 1px black;
+        padding: 1vw;
+    }
+</style>
 <body>
-    <button id="bluetoothButton">BlueTooth</button>
+    <button id="bluetoothButton">Bluetooth</button>
+    <p>Log</p>
+    <div id="logs"></div>
 </body>
 <script src="./webBluetooth.js"></script>
 <script type="text/javascript">
@@ -15,7 +38,7 @@
         service_uuid: '00001623-1212-efde-1623-785feabcd123',
         Characteristic_uuid: '00001624-1212-efde-1623-785feabcd123'
     }
-    const bluetooth = new WebBlueTooth()//uuid
+    const bluetooth = new WebBlueTooth(uuid)//uuid
     
 
     const bludetoothButton = document.getElementById('bluetoothButton');
