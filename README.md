@@ -6,3 +6,6 @@ LEGO BOOST WEB CONTROL
     - vanilaJS로 예제사이트 먼저 제작
         - web-bluetooth로 lego boost 연결.
  - v0.0.1
+ - 11/15
+    - getCharacteristic
+ - v0.0.2
