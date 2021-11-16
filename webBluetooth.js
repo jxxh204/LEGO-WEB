@@ -12,7 +12,8 @@ class WebBlueTooth {
             23: 'LED',
             37: 'DISTANCE',
             38: 'IMOTOR',
-            39: 'MOTOR',
+            46: 'MOTOR',
+            1 : 'new MOTOR',
             40: 'TILT',
         };
         this.port2num = {
@@ -70,6 +71,7 @@ class WebBlueTooth {
         // @ts-ignore
         // characteristicvalue만큼? 이벤트.
         const data = new Uint8Array(event.target.value.buffer)
+        // console.log(data)
         this.parseMessage(data);
     });
 
@@ -100,11 +102,11 @@ class WebBlueTooth {
             //     this.emit('connect');
             //   }
             }, 1000);
-            if (typeof(data[5]) === undefined) data[5] = 0;
+            if (typeof(data[5]) === 'undefined') data[5] = 0;
             console.log(data[5])
-            // if (this.num2type[data[5]]) { // data[5] 달려있는 포트의 넘버
+            if (this.num2type[data[5]]) { // data[5] 달려있는 포트의 넘버
                 this.setLog('Found: ' + this.num2type[data[5]]);
-            // }
+            }
               if (data[4] === 0x01) {
                 //어떤 포트가 달려있는지. 확인. 모터를 인식못함.
                 this.ports[data[3]] = {
@@ -282,7 +284,7 @@ class WebBlueTooth {
         charcter.writeValue(write)
         .then((write) => {
           this.isWriting = false;
-          if (typeof el.callback === 'function') el.callback();
+        //   if (typeof write.callback === 'function') write.callback();
           return write
         })
         .catch(err => {
@@ -298,12 +300,22 @@ class WebBlueTooth {
         });
     }
     buf(buf) {
-        var ab = new ArrayBuffer(buf.length);
-        var view = new Uint8Array(ab);
-        for (var i = 0; i < buf.length; ++i) {
-            view[i] = buf[i];
-        }
-        return ab;
+        // var ab = new ArrayBuffer(buf);
+        // console.log(ab)
+        // var view = new Uint8Array(ab);
+        // for (var i = 0; i < buf.length; ++i) {
+        //     view[i] = buf[i];
+        // }
+        // return ab;
+        let arr = new Uint8Array([0x00,0x00])
+        let buffer = new Uint8Array(buf)
+        var tmp = new Uint8Array(buffer.byteLength + arr.byteLength);
+        tmp.set(arr, 0);
+        tmp.set(buffer, arr.byteLength);
+        tmp[0] = tmp.length;
+
+        console.log(tmp)
+        return tmp
     }
 
       setLog(text) {

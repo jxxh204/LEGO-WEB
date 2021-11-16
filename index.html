@@ -51,9 +51,11 @@
     buttonA.addEventListener("mousedown", () => {
         bluetooth.send(bluetooth.getChar, 'A',-100)
     })
+    buttonA.addEventListener("mousedown", () => {
+        bluetooth.send(bluetooth.getChar, 'A',-100)
+    })
     buttonA.addEventListener("mouseup", () => {
-        
-        bluetooth.send(bluetooth.getChar, 'A',0)
+    
     })
     //lego boost uuid
  
