@@ -32,6 +32,11 @@
     <p>Log</p>
     <div id="logs"></div>
     <button id="buttonA">A</button>
+    <button id="buttonB">B</button>
+    <button id="buttonC">C</button>
+    <button id="buttonD">D</button>
+    <button id="buttonLED">LED</button>
+    <button id="buttonAllStop">ALLSTOP</button>
 </body>
 <script src="./webBluetooth.js"></script>
 <script type="text/javascript">
@@ -48,15 +53,43 @@
         bluetooth.connect();
     })
     const buttonA = document.getElementById('buttonA');
-    buttonA.addEventListener("mousedown", () => {
-        bluetooth.send(bluetooth.getChar, 'A',-100)
-    })
-    buttonA.addEventListener("mousedown", () => {
-        bluetooth.send(bluetooth.getChar, 'A',-100)
-    })
-    buttonA.addEventListener("mouseup", () => {
+    const buttonB = document.getElementById('buttonB');
+    const buttonC = document.getElementById('buttonC');
+    const buttonD = document.getElementById('buttonD');
+    const buttonLED = document.getElementById('buttonLED');
+    const buttonAllStop = document.getElementById('buttonAllStop');
+
     
+
+    buttonA.addEventListener("mousedown", () => {
+        bluetooth.send(bluetooth.getChar, 'A',-100)
     })
+    buttonB.addEventListener("mousedown", () => {
+        bluetooth.send(bluetooth.getChar, 'B',-100)
+    })
+
+    buttonC.addEventListener("mousedown", () => {
+        bluetooth.send(bluetooth.getChar, 'C',-100)
+    })
+
+    buttonD.addEventListener("mousedown", () => {
+        bluetooth.send(bluetooth.getChar, 'D',-100)
+    })
+    buttonLED.addEventListener("mousedown", () => {
+        bluetooth.send(bluetooth.getChar, 'LED','red')
+    })
+    buttonAllStop.addEventListener("mousedown", () => {
+        bluetooth.send(bluetooth.getChar, 'A',0)
+        bluetooth.send(bluetooth.getChar, 'B',0)
+        bluetooth.send(bluetooth.getChar, 'C',0)
+        bluetooth.send(bluetooth.getChar, 'D',0)
+        bluetooth.send(bluetooth.getChar, 'LED',0x01)
+    })
+
+
+
+
+
     //lego boost uuid
  
 </script>
