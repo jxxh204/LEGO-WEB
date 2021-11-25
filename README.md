@@ -18,4 +18,6 @@ LEGO BOOST WEB CONTROL
  - v0.0.5
  - 11/21
  - 버튼 추가
+ - 11/25
+ - npm install blockly
  - v0.0.6
