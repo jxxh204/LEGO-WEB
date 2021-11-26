@@ -22,11 +22,19 @@
         background: black;
         color:white
     }
-    div {
+    #logs {
         border: solid 1px black;
         padding: 1vw;
     }
+    #blockly {
+        width: 100%;
+    height: 20vw;   
+    }
 </style>
+<script src="./blockly/blockly_compressed.js"></script>
+<script src="./blockly/blocks_compressed.js"></script>
+<script src="./blockly/javascript_compressed.js"></script>
+<script src="./blockly/ko.js"></script>
 <body>
     <button id="bluetoothButton">Bluetooth</button>
     <p>Log</p>
@@ -37,11 +45,23 @@
     <button id="buttonD">D</button>
     <button id="buttonLED">LED</button>
     <button id="buttonAllStop">ALLSTOP</button>
+    <div id="blockly"></div>
+
+    <xml xmlns="https://developers.google.com/blockly/xml" id="toolbox" style="display: none">
+        <category name="New" colour="#fdd835">
+          <block type="hello"></block> <!-- 정의한 블록 -->
+        </category>
+        <category name="Logic" colour="%{BKY_LOGIC_HUE}">
+          <block type="controls_if"></block>
+          <block type="logic_compare"></block>
+          <block type="logic_operation"></block>
+          <block type="logic_negate"></block>
+          <block type="logic_boolean"></block>
+          <block type="logic_null"></block>
+          <block type="logic_ternary"></block>
+        </category>
+      </xml>
 </body>
-<script src="./script/blockly/blockly_compressed.js"></script>
-<script src="./script/blockly/blocks_compressed.js"></script>
-<script src="./script/blockly/javascript_compressed.js"></script>
-<script src="./script/blockly/ko.js"></script>
 <!-- blockly -->
 <script src="./webBluetooth.js"></script>
 <script type="text/javascript">
@@ -50,7 +70,58 @@
         Characteristic_uuid: '00001624-1212-efde-1623-785feabcd123'
     }
     const bluetooth = new WebBlueTooth(uuid)//uuid
-    
+
+    //  blockly
+    const blockly = document.querySelector('#blockly');
+
+    const workspace = Blockly.inject(blockly, {
+        toolbox: document.querySelector('#toolbox'),
+        theme: Blockly.Themes.Custom,
+    });
+    Blockly.svgResize(workspace);
+
+    Blockly.Themes.Custom = Blockly.Theme.defineTheme('custom', {
+  base: Blockly.Themes.Classic,
+  componentStyles: {
+    workspaceBackgroundColour: '#eef2f9',
+    toolboxBackgroundColour: '#f6f8fc',
+    toolboxForegroundColour: '#6e6e8e',
+    flyoutBackgroundColour: '#f6f8fc',
+    flyoutForegroundColour: '#6e6e8e',
+    flyoutOpacity: 1,
+    scrollbarColour: '#bbbccb',
+    scrollbarOpacity: 1,
+    insertionMarkerColour: '#fff',
+    insertionMarkerOpacity: 1,
+    cursorColour: '#fff',
+  },
+});
+Blockly.Blocks.hello = {
+  init() {
+    this.jsonInit({
+      message0: '%1번 인사하기',
+      args0: [
+        {
+          type: 'field_number',
+          name: 'TIME',
+          value: 0,
+          min: 0,
+          precision: 1,
+        },
+      ],
+      previousStatement: null,
+      nextStatement: null,
+      colour: '#fdd835',
+    });
+  },
+};
+Blockly.JavaScript.hello = (block) => {
+  const time = block.getFieldValue('TIME');
+  const code = `for(let i = 0; i < ${time}; i += 1) { alert("hello"); }\n`;
+  return code;
+};
+    //  blockly
+
 
     const bludetoothButton = document.getElementById('bluetoothButton');
     bludetoothButton.addEventListener("click", ()=>{
