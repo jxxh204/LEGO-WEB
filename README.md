@@ -26,3 +26,6 @@ LEGO BOOST WEB CONTROL
 ## 11/26
  - blockly 사용
  - v0.0.8
+## 12/20
+ - gamePad api를 사용하여 조이스틱으로 간단한 탱크 조종
+ - v0.0.9

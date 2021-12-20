@@ -64,13 +64,36 @@
 </body>
 <!-- blockly -->
 <script src="./webBluetooth.js"></script>
+
+
 <script type="text/javascript">
-    const uuid = {
-        service_uuid: '00001623-1212-efde-1623-785feabcd123',
+    const boost_uuid = {
+        service_uuid: '00001623-1212-efde-1623-785feabcd123', //boost
         Characteristic_uuid: '00001624-1212-efde-1623-785feabcd123'
     }
-    const bluetooth = new WebBlueTooth(uuid)//uuid
-
+      const wedo2_uuid = {
+        // 00001565-1212-efde-1523-785feabcd123
+        service_uuid: '00001523-1212-efde-1523-785feabcd123', //wedo2
+        Characteristic_uuid: '00001524-1212-efde-1523-785feabcd123'
+        // https://github.com/cpseager/WeDo2-BLE-Protocol/blob/master/wedo2_summary.txt
+    }
+      const poweredUp_uuid = {
+        service_uuid: '00001623-1212-efde-1623-785feabcd123',
+        Characteristic_uuid: ' 00002a00-0000-1000-8000-00805f9b34fb'
+        //http://www.treczoks.net/PoweredUp!%20Documentation.pdf
+      }
+      const test_uuid = {
+        service_uuid: 'b769c1dc-aad9-42cc-b8ae-7cd291af255e',
+        Characteristic_uuid:'b769c1dc-aad9-42cc-b8ae-7cd291af255e'
+        // https://usermanual.wiki/King-Tech-Mould/M2/info
+      }
+      const text2 = {
+        service_uuid: '93:6E:67:B1:19:99:B3:88:81:44:FB:74:00:00:05:4E',
+        Characteristic_uuid: '0F:DC:A4:95:E6:CD:0E:90:BA:46:98:AC:C1:A4:05:4E'
+      }
+      
+    const bluetooth = new WebBlueTooth(boost_uuid)//uuid
+    
     //  blockly
     const blockly = document.querySelector('#blockly');
 
@@ -163,10 +186,84 @@ Blockly.JavaScript.hello = (block) => {
     })
 
 
+    let controllers = [];
+      // gamePad
+
+ 
+      const scangamepads = () => {
+        let gamepads = navigator.getGamepads ? navigator.getGamepads() : (navigator.webkitGetGamepads ? navigator.webkitGetGamepads() : []);
+        for (var i = 0; i < gamepads.length; i++) {
+            if (gamepads[i] && (gamepads[i].index in controllers)) {
+            controllers[gamepads[i].index] = gamepads[i];
+            }
+        }
+        console.log(controllers[0].buttons)
+        let gamePad = {
+            x : controllers[0].axes[0],
+            y : controllers[0].axes[1],
+            one : controllers[0].buttons[0],
+            two : controllers[0].buttons[1]
+        }
+        //charcter, port, value
+            if (gamePad.x === -1) { //왼쪽
+                console.log("좌")
+                bluetooth.send(bluetooth.getChar, 'A',100)
+            }
+            if (gamePad.x === 1) { // 오른쪽
+                console.log("오른")
+                bluetooth.send(bluetooth.getChar, 'B',100)
+            }
+            if (gamePad.y === -1) {// 위
+                console.log("위")
+                bluetooth.send(bluetooth.getChar, 'A',100)
+                setTimeout(() => {
+                  bluetooth.send(bluetooth.getChar, 'B',-100)
+                  
+                }, 100);
+            }
+            if (gamePad.y === 1) { // 아래
+                console.log("아래")
+                bluetooth.send(bluetooth.getChar, 'A',-100)
+                setTimeout(() => {
+                  bluetooth.send(bluetooth.getChar, 'B',100)
+                }, 100);
+            }
+            if (gamePad.one.value === 1) {
+              bluetooth.send(bluetooth.getChar, 'C',100)
+            }
+            if (gamePad.two.value === 1) {
+              bluetooth.send(bluetooth.getChar, 'C',0)
+            }
+            if (gamePad.x === -0) {
+              bluetooth.send(bluetooth.getChar, 'A',0)
+              setTimeout(() => {
+                bluetooth.send(bluetooth.getChar, 'B',0);                 
+              }, 100);
+            } else if (gamePad.y === -0) {
+              bluetooth.send(bluetooth.getChar, 'A',0)
+              setTimeout(() => {
+                bluetooth.send(bluetooth.getChar, 'B',0)
+                }, 100);
+            }
+    }
+
+    const addgamepad = (gamepad) => {
+      console.log("gamepad : ",gamepad)
+      controllers[gamepad.index] = gamepad; 
+      setInterval(() => {
+          scangamepads()
+      }, 50)
+    }
+    const gamepadHandler = (event, connecting) => {
+    console.log("gamepadconnected",event)
+      addgamepad(event.gamepad);
+    }
+    window.addEventListener("gamepadconnected", gamepadHandler)
+    window.addEventListener("gamepaddisconnected", gamepadHandler)
+      // gamePad
 
 
 
-    //lego boost uuid
  
 </script>
 </html>

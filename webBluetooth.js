@@ -29,11 +29,11 @@ class WebBlueTooth {
     async connect () {
         this.clearLog();
         let options;
-        if (uuid.service_uuid) {
+        if (this.uuid.service_uuid) {
             options = {
                 acceptAllDevices: false,
-                filters : [{services : [uuid.service_uuid]}],
-                optionalServices: [uuid.service_uuid],
+                filters : [{services : [this.uuid.service_uuid]}],
+                optionalServices: [this.uuid.service_uuid],
             }
         } else {
             options = {
@@ -56,10 +56,10 @@ class WebBlueTooth {
         const server = await device.gatt.connect(); 
         // device를 스크립트 실행환경에 연결.
         this.setLog('Getting Service...');
-        const service = await server.getPrimaryService(uuid.service_uuid); 
+        const service = await server.getPrimaryService(this.uuid.service_uuid); 
         // 명확한 service_uuid를 제공한다면 service를 제공.
         this.setLog('Getting Characteristic...');
-        this.getChar = await service.getCharacteristic(uuid.Characteristic_uuid);
+        this.getChar = await service.getCharacteristic(this.uuid.Characteristic_uuid);
         // Characteristic을 제공.
 
         this.addListeners()
@@ -262,8 +262,14 @@ class WebBlueTooth {
             case 'B' : //회전 : 변수의 최대값을 100으로 정해서 10씩 증가하여 100이되면 못보내도록 한다.
                 port = 0x01
                 break;
-            case 'AB' :
+            case 'C' :
                 port = 0x02
+                break;
+            case 'D' :
+                port = 0x03
+                break;
+            case 'AB' :
+                port = 0x04
                 break;
             case 'LED' :
                 port = 0x32
@@ -280,6 +286,7 @@ class WebBlueTooth {
         }
         //Motor Sub 0x81
         this.isWriting = true
+        console.log(port)
         const write = await this.buf([0x81, port, 0x11, 0x51, 0x00, value])
         charcter.writeValue(write)
         .then((write) => {
@@ -348,4 +355,5 @@ class WebBlueTooth {
     //         return false;
     //     }
 }
+
 
