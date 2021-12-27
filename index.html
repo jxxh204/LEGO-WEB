@@ -187,6 +187,14 @@ Blockly.JavaScript.hello = (block) => {
 
 
     let controllers = [];
+    let once = {
+      x : false,
+      y : false,
+      one : false,
+      two : false,
+      three : false,
+      four : false
+    };
       // gamePad
 
  
@@ -202,61 +210,114 @@ Blockly.JavaScript.hello = (block) => {
             x : controllers[0].axes[0],
             y : controllers[0].axes[1],
             one : controllers[0].buttons[0],
-            two : controllers[0].buttons[1]
+            two : controllers[0].buttons[1],
+            three : controllers[0].buttons[2],
+            four : controllers[0].buttons[3]
         }
+
         //charcter, port, value
-            if (gamePad.x === -1) { //왼쪽
+            if (gamePad.x === -1 && !once.x) { //왼쪽
                 console.log("좌")
                 bluetooth.send(bluetooth.getChar, 'A',100)
-            }
-            if (gamePad.x === 1) { // 오른쪽
-                console.log("오른")
-                bluetooth.send(bluetooth.getChar, 'B',100)
-            }
-            if (gamePad.y === -1) {// 위
-                console.log("위")
-                bluetooth.send(bluetooth.getChar, 'A',100)
                 setTimeout(() => {
-                  bluetooth.send(bluetooth.getChar, 'B',-100)
-                  
-                }, 100);
+                  bluetooth.send(bluetooth.getChar, 'B',100)
+                  once.x = true;
+                },50);
             }
-            if (gamePad.y === 1) { // 아래
-                console.log("아래")
+            if (gamePad.x === 1 && !once.x) { // 오른쪽
+                console.log("오른")
+                bluetooth.send(bluetooth.getChar, 'B',-100)
+                setTimeout(() => {
+                  bluetooth.send(bluetooth.getChar, 'A',-100)
+                  once.x = true;
+                },50);
+            }
+            if (gamePad.y === -1 && !once.y) {// 위
+                console.log("위")
                 bluetooth.send(bluetooth.getChar, 'A',-100)
                 setTimeout(() => {
                   bluetooth.send(bluetooth.getChar, 'B',100)
-                }, 100);
+                  once.y = true;
+                }, 50);
             }
-            if (gamePad.one.value === 1) {
-              bluetooth.send(bluetooth.getChar, 'C',100)
+            if (gamePad.y === 1 && !once.y) { // 아래
+                console.log("아래")
+                bluetooth.send(bluetooth.getChar, 'A',100)
+                setTimeout(() => {
+                  bluetooth.send(bluetooth.getChar, 'B',-100)
+                  once.y = true;
+                }, 50);
             }
-            if (gamePad.two.value === 1) {
-              bluetooth.send(bluetooth.getChar, 'C',0)
-            }
-            if (gamePad.x === -0) {
-              bluetooth.send(bluetooth.getChar, 'A',0)
-              setTimeout(() => {
-                bluetooth.send(bluetooth.getChar, 'B',0);                 
-              }, 100);
-            } else if (gamePad.y === -0) {
-              bluetooth.send(bluetooth.getChar, 'A',0)
-              setTimeout(() => {
-                bluetooth.send(bluetooth.getChar, 'B',0)
-                }, 100);
-            }
+      if (gamePad.one.value === 1 && !once.one) {
+        bluetooth.send(bluetooth.getChar, 'C',50)
+        once.one = true;
+        
+      }
+      if (gamePad.two.value === 1 && !once.two) {
+        bluetooth.send(bluetooth.getChar, 'C',-50)
+        once.two = true;
+
+      }
+      if (gamePad.three.value === 1 && !once.three) {
+        bluetooth.send(bluetooth.getChar, 'D',-100)
+        once.three = true;
+
+      }
+      if (gamePad.four.value === 1 && !once.four) {
+        bluetooth.send(bluetooth.getChar, 'D',100)
+        once.four = true;
+
+      }
+      console.log("four",once.four)
+      if (gamePad.one.value === 0 && once.one) {
+        bluetooth.send(bluetooth.getChar, 'C',10)
+        once.one = false;
+
+      }
+      if (gamePad.two.value === 0 && once.two) {
+        bluetooth.send(bluetooth.getChar, 'C',10)
+        once.two = false;
+
+      }
+      if (gamePad.three.value === 0 && once.three) {
+        bluetooth.send(bluetooth.getChar, 'D',0)
+        once.three = false;
+      }
+      if (gamePad.four.value === 0 && once.four) {
+          bluetooth.send(bluetooth.getChar, 'D',0)
+        once.four = false;
+
+      }
+
+      console.log("y",once.y,Math.ceil(gamePad.y))
+      if (Math.ceil(gamePad.x) === -0 && once.x) {
+        bluetooth.send(bluetooth.getChar, 'A',0)
+        setTimeout(() => {
+          bluetooth.send(bluetooth.getChar, 'B',0);         
+          once.x = false;
+        }, 100);
+      } else if (Math.ceil(gamePad.y) === -0 && once.y) {
+        bluetooth.send(bluetooth.getChar, 'A',0)
+        setTimeout(() => {
+          bluetooth.send(bluetooth.getChar, 'B',0)
+          once.y = false;
+          }, 100);
+          
+      }
     }
+
 
     const addgamepad = (gamepad) => {
       console.log("gamepad : ",gamepad)
       controllers[gamepad.index] = gamepad; 
       setInterval(() => {
           scangamepads()
-      }, 50)
+      }, 100)
     }
     const gamepadHandler = (event, connecting) => {
     console.log("gamepadconnected",event)
       addgamepad(event.gamepad);
+      
     }
     window.addEventListener("gamepadconnected", gamepadHandler)
     window.addEventListener("gamepaddisconnected", gamepadHandler)

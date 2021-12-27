@@ -25,6 +25,7 @@ class GamePad extends ConnectLego {
             this.scangamepads()
         }, 50)
     }
+    
     scangamepads = () => {
         let gamepads = navigator.getGamepads ? navigator.getGamepads() : (navigator.webkitGetGamepads ? navigator.webkitGetGamepads() : []);
         for (var i = 0; i < gamepads.length; i++) {
